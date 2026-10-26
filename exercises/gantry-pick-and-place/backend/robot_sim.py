@@ -4,10 +4,7 @@ from enum import Enum
 import math
 import time
 
-MoveResult = tuple[list[float], list[float]] # Position and speed
-
-class InvalidMoveRequestError(ValueError):
-    pass
+MoveResult = tuple[list[float], list[float], str | None]
 
 
 class GripperState(Enum):
@@ -44,21 +41,16 @@ class Robot():
                 return False
         return True
 
-    def _validate_move(self, target_position: list[float], speed: int) -> None:
-        if not (0 < speed <= 100):
-            raise InvalidMoveRequestError(f"Requested speed of {speed} mm/s is outside of the limits (0,100]")
-        if len(target_position) != len(self.current_position):
-            raise InvalidMoveRequestError(f"Requested position must have {len(self.current_position)} axes, got {len(target_position)}")
-        for i, j in enumerate(target_position):
-            if not math.isfinite(j):
-                raise InvalidMoveRequestError(f"Requested position of {j} for axis {i} is not a finite number")
-            if abs(j) > self.robot_limits[i]:
-                raise InvalidMoveRequestError(f"Requested position of {j} for axis {i} is outside of the limits {self.robot_limits}")
-
     def move_to(self, target_position: list[float], speed: int = 90) -> MoveResult:
-        self._validate_move(target_position, speed)
 
-        if self._same_position(target_position): return self.current_position, self.axis_speed
+        if not (0 < speed <= 100) : return self.current_position, self.axis_speed, f"Requested speed of : {speed} mm/s is outside of the limits (0,100]"
+        if len(target_position) != len(self.current_position):
+            return self.current_position, self.axis_speed, f"Requested position must have {len(self.current_position)} axes, got {len(target_position)}"
+        for i,j in enumerate(target_position) :
+            if j > self.robot_limits[i] or j < -self.robot_limits[i] :
+                return self.current_position, self.axis_speed, f"Requested position of : {j} for axis {i} is outside of the limits {self.robot_limits}"
+
+        if self._same_position(target_position): return self.current_position, self.axis_speed, None
 
         actual_time = time.perf_counter()
 
@@ -76,7 +68,7 @@ class Robot():
             self.axis_speed = [0,0,0]
             self.current_position = list(target_position)
 
-        return self.current_position, self.axis_speed
+        return self.current_position, self.axis_speed, None
 
     def close_gripper(self) -> GripperState:
         self.gripper_state = GripperState.CLOSED
