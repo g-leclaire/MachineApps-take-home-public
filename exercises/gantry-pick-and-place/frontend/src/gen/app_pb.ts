@@ -12,7 +12,29 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file app.proto.
  */
 export const file_app: GenFile = /*@__PURE__*/
-  fileDesc("CglhcHAucHJvdG8SDnZlbnRpb24uYXBwLnYxIjIKDVN0YXRlUmVzcG9uc2USDQoFc3RhdGUYASABKAkSEgoKbGFzdF9zdGF0ZRgCIAEoCSJFCgxIaXN0b3J5RW50cnkSEQoJdGltZXN0YW1wGAEgASgJEg0KBXN0YXRlGAIgASgJEhMKC2R1cmF0aW9uX21zGAMgASgFIlUKD0hpc3RvcnlSZXNwb25zZRItCgdoaXN0b3J5GAEgAygLMhwudmVudGlvbi5hcHAudjEuSGlzdG9yeUVudHJ5EhMKC2J1ZmZlcl9zaXplGAIgASgFIkwKD1RyaWdnZXJSZXNwb25zZRIOCgZyZXN1bHQYASABKAkSFgoOcHJldmlvdXNfc3RhdGUYAiABKAkSEQoJbmV3X3N0YXRlGAMgASgJIi0KDU1hY2hpbmVTdGF0dXMSDQoFc3RhdGUYASABKAkSDQoFZXJyb3IYAiABKAky2wMKGUdhbnRyeVBpY2tBbmRQbGFjZVNlcnZpY2USQQoIR2V0U3RhdGUSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHS52ZW50aW9uLmFwcC52MS5TdGF0ZVJlc3BvbnNlEkUKCkdldEhpc3RvcnkSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHy52ZW50aW9uLmFwcC52MS5IaXN0b3J5UmVzcG9uc2USRwoMVHJpZ2dlcl9Ib21lEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Gh8udmVudGlvbi5hcHAudjEuVHJpZ2dlclJlc3BvbnNlElEKFlRyaWdnZXJfQmVnaW5fc2VxdWVuY2USFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHy52ZW50aW9uLmFwcC52MS5UcmlnZ2VyUmVzcG9uc2USSAoNVHJpZ2dlcl9SZXNldBIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRofLnZlbnRpb24uYXBwLnYxLlRyaWdnZXJSZXNwb25zZRJOChNNYWNoaW5lU3RhdHVzU3RyZWFtEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Gh0udmVudGlvbi5hcHAudjEuTWFjaGluZVN0YXR1czABYgZwcm90bzM", [file_google_protobuf_empty]);
+  fileDesc("CglhcHAucHJvdG8SDnZlbnRpb24uYXBwLnYxIkYKD1RhcmdldFBvc2l0aW9ucxIVCg1jdWJlX3Bvc2l0aW9uGAEgAygBEhwKFGRlc3RpbmF0aW9uX3Bvc2l0aW9uGAIgAygBIjIKDVN0YXRlUmVzcG9uc2USDQoFc3RhdGUYASABKAkSEgoKbGFzdF9zdGF0ZRgCIAEoCSJFCgxIaXN0b3J5RW50cnkSEQoJdGltZXN0YW1wGAEgASgJEg0KBXN0YXRlGAIgASgJEhMKC2R1cmF0aW9uX21zGAMgASgFIlUKD0hpc3RvcnlSZXNwb25zZRItCgdoaXN0b3J5GAEgAygLMhwudmVudGlvbi5hcHAudjEuSGlzdG9yeUVudHJ5EhMKC2J1ZmZlcl9zaXplGAIgASgFIkwKD1RyaWdnZXJSZXNwb25zZRIOCgZyZXN1bHQYASABKAkSFgoOcHJldmlvdXNfc3RhdGUYAiABKAkSEQoJbmV3X3N0YXRlGAMgASgJImMKCVRlbGVtZXRyeRINCgVzdGF0ZRgBIAEoCRINCgVlcnJvchgCIAEoCRIQCghwb3NpdGlvbhgDIAMoARIWCg5ncmlwcGVyX2Nsb3NlZBgEIAEoCBIOCgZtb3ZpbmcYBSABKAgy/gQKGUdhbnRyeVBpY2tBbmRQbGFjZVNlcnZpY2USTwoUZ2V0X3RhcmdldF9wb3NpdGlvbnMSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHy52ZW50aW9uLmFwcC52MS5UYXJnZXRQb3NpdGlvbnMSWAoUc2V0X3RhcmdldF9wb3NpdGlvbnMSHy52ZW50aW9uLmFwcC52MS5UYXJnZXRQb3NpdGlvbnMaHy52ZW50aW9uLmFwcC52MS5UYXJnZXRQb3NpdGlvbnMSQQoIR2V0U3RhdGUSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHS52ZW50aW9uLmFwcC52MS5TdGF0ZVJlc3BvbnNlEkUKCkdldEhpc3RvcnkSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHy52ZW50aW9uLmFwcC52MS5IaXN0b3J5UmVzcG9uc2USRwoMVHJpZ2dlcl9Ib21lEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Gh8udmVudGlvbi5hcHAudjEuVHJpZ2dlclJlc3BvbnNlElEKFlRyaWdnZXJfQmVnaW5fc2VxdWVuY2USFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHy52ZW50aW9uLmFwcC52MS5UcmlnZ2VyUmVzcG9uc2USSAoNVHJpZ2dlcl9SZXNldBIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRofLnZlbnRpb24uYXBwLnYxLlRyaWdnZXJSZXNwb25zZRJGCg9UZWxlbWV0cnlTdHJlYW0SFi5nb29nbGUucHJvdG9idWYuRW1wdHkaGS52ZW50aW9uLmFwcC52MS5UZWxlbWV0cnkwAWIGcHJvdG8z", [file_google_protobuf_empty]);
+
+/**
+ * @generated from message vention.app.v1.TargetPositions
+ */
+export type TargetPositions = Message<"vention.app.v1.TargetPositions"> & {
+  /**
+   * @generated from field: repeated double cube_position = 1;
+   */
+  cubePosition: number[];
+
+  /**
+   * @generated from field: repeated double destination_position = 2;
+   */
+  destinationPosition: number[];
+};
+
+/**
+ * Describes the message vention.app.v1.TargetPositions.
+ * Use `create(TargetPositionsSchema)` to create a new message.
+ */
+export const TargetPositionsSchema: GenMessage<TargetPositions> = /*@__PURE__*/
+  messageDesc(file_app, 0);
 
 /**
  * @generated from message vention.app.v1.StateResponse
@@ -34,7 +56,7 @@ export type StateResponse = Message<"vention.app.v1.StateResponse"> & {
  * Use `create(StateResponseSchema)` to create a new message.
  */
 export const StateResponseSchema: GenMessage<StateResponse> = /*@__PURE__*/
-  messageDesc(file_app, 0);
+  messageDesc(file_app, 1);
 
 /**
  * @generated from message vention.app.v1.HistoryEntry
@@ -61,7 +83,7 @@ export type HistoryEntry = Message<"vention.app.v1.HistoryEntry"> & {
  * Use `create(HistoryEntrySchema)` to create a new message.
  */
 export const HistoryEntrySchema: GenMessage<HistoryEntry> = /*@__PURE__*/
-  messageDesc(file_app, 1);
+  messageDesc(file_app, 2);
 
 /**
  * @generated from message vention.app.v1.HistoryResponse
@@ -83,7 +105,7 @@ export type HistoryResponse = Message<"vention.app.v1.HistoryResponse"> & {
  * Use `create(HistoryResponseSchema)` to create a new message.
  */
 export const HistoryResponseSchema: GenMessage<HistoryResponse> = /*@__PURE__*/
-  messageDesc(file_app, 2);
+  messageDesc(file_app, 3);
 
 /**
  * @generated from message vention.app.v1.TriggerResponse
@@ -110,12 +132,12 @@ export type TriggerResponse = Message<"vention.app.v1.TriggerResponse"> & {
  * Use `create(TriggerResponseSchema)` to create a new message.
  */
 export const TriggerResponseSchema: GenMessage<TriggerResponse> = /*@__PURE__*/
-  messageDesc(file_app, 3);
+  messageDesc(file_app, 4);
 
 /**
- * @generated from message vention.app.v1.MachineStatus
+ * @generated from message vention.app.v1.Telemetry
  */
-export type MachineStatus = Message<"vention.app.v1.MachineStatus"> & {
+export type Telemetry = Message<"vention.app.v1.Telemetry"> & {
   /**
    * @generated from field: string state = 1;
    */
@@ -125,19 +147,50 @@ export type MachineStatus = Message<"vention.app.v1.MachineStatus"> & {
    * @generated from field: string error = 2;
    */
   error: string;
+
+  /**
+   * @generated from field: repeated double position = 3;
+   */
+  position: number[];
+
+  /**
+   * @generated from field: bool gripper_closed = 4;
+   */
+  gripperClosed: boolean;
+
+  /**
+   * @generated from field: bool moving = 5;
+   */
+  moving: boolean;
 };
 
 /**
- * Describes the message vention.app.v1.MachineStatus.
- * Use `create(MachineStatusSchema)` to create a new message.
+ * Describes the message vention.app.v1.Telemetry.
+ * Use `create(TelemetrySchema)` to create a new message.
  */
-export const MachineStatusSchema: GenMessage<MachineStatus> = /*@__PURE__*/
-  messageDesc(file_app, 4);
+export const TelemetrySchema: GenMessage<Telemetry> = /*@__PURE__*/
+  messageDesc(file_app, 5);
 
 /**
  * @generated from service vention.app.v1.GantryPickAndPlaceService
  */
 export const GantryPickAndPlaceService: GenService<{
+  /**
+   * @generated from rpc vention.app.v1.GantryPickAndPlaceService.get_target_positions
+   */
+  get_target_positions: {
+    methodKind: "unary";
+    input: typeof EmptySchema;
+    output: typeof TargetPositionsSchema;
+  },
+  /**
+   * @generated from rpc vention.app.v1.GantryPickAndPlaceService.set_target_positions
+   */
+  set_target_positions: {
+    methodKind: "unary";
+    input: typeof TargetPositionsSchema;
+    output: typeof TargetPositionsSchema;
+  },
   /**
    * @generated from rpc vention.app.v1.GantryPickAndPlaceService.GetState
    */
@@ -179,12 +232,12 @@ export const GantryPickAndPlaceService: GenService<{
     output: typeof TriggerResponseSchema;
   },
   /**
-   * @generated from rpc vention.app.v1.GantryPickAndPlaceService.MachineStatusStream
+   * @generated from rpc vention.app.v1.GantryPickAndPlaceService.TelemetryStream
    */
-  machineStatusStream: {
+  telemetryStream: {
     methodKind: "server_streaming";
     input: typeof EmptySchema;
-    output: typeof MachineStatusSchema;
+    output: typeof TelemetrySchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_app, 0);

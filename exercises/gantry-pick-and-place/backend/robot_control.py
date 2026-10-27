@@ -1,4 +1,5 @@
 import asyncio
+from collections.abc import Callable
 
 from state_machine.core import StateMachine
 from state_machine.defs import State, StateGroup, Trigger
@@ -63,6 +64,7 @@ class GantryMachine(StateMachine):
     def __init__(self, robot: Robot | None = None):
         self.robot = robot if robot is not None else Robot()
         self.last_error: str | None = None
+        self.on_motion_update: Callable[[], None] | None = None
         super().__init__(
             states=States,
             transitions=TRANSITIONS,
@@ -89,6 +91,9 @@ class GantryMachine(StateMachine):
                     self.last_error = error
                     self.trigger(Triggers.to_fault.name)
                     return
+
+                if self.on_motion_update:
+                    self.on_motion_update()
 
                 if all(abs(actual - expected) < 1e-6 for actual, expected in zip(position, target)):
                     self.trigger(completion_trigger.name)

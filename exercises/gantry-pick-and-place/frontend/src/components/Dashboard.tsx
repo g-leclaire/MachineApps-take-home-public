@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
-import { useMachineState } from '../hooks/useMachineState'
+import { useTelemetry } from '../hooks/useTelemetry'
+import TargetPositions from './TargetPositions'
 import { gantryClient } from '../rpc/gantry-client'
 import './Dashboard.css'
 
@@ -9,12 +10,19 @@ function stateLabel(state: string | null): string {
   return state.replace(/^PickPlace_/, '').replaceAll('_', ' ')
 }
 
+function formatPosition(position: readonly number[] | undefined): string {
+  if (!position || position.length < 3) return '—'
+  return position.map((value) => value.toFixed(1)).join(', ')
+}
+
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'An unexpected request error occurred.'
 }
 
 function Dashboard() {
-  const { machineState, machineError, connectionError } = useMachineState()
+  const { telemetry, connectionError } = useTelemetry()
+  const machineState = telemetry?.state ?? null
+  const machineError = telemetry?.error ? telemetry.error : null
   const [actionError, setActionError] = useState<string | null>(null)
   const [isStarting, setIsStarting] = useState(false)
 
@@ -70,6 +78,23 @@ function Dashboard() {
             </button>
           </section>
         </div>
+
+        <dl className="telemetry-grid" aria-label="Telemetry">
+          <div>
+            <dt className="eyebrow">ROBOT POSITION (X, Y, Z)</dt>
+            <dd>{formatPosition(telemetry?.position)}</dd>
+          </div>
+          <div>
+            <dt className="eyebrow">GRIPPER</dt>
+            <dd>{telemetry ? (telemetry.gripperClosed ? 'Closed' : 'Open') : '—'}</dd>
+          </div>
+          <div>
+            <dt className="eyebrow">MOTION</dt>
+            <dd>{telemetry ? (telemetry.moving ? 'Moving' : 'Idle') : '—'}</dd>
+          </div>
+        </dl>
+
+        <TargetPositions canEdit={machineState === 'ready' && connectionError === null} />
 
         {(connectionError || machineError || actionError) && (
           <p className="error-message" role="alert">

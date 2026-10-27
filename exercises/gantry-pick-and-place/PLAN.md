@@ -111,3 +111,4 @@ Record decisions here as they are made, for the final README write-up.
 - Use safe travel Z `750`, pickup `[-500, 500, 500]`, and placement `[500, -500, 500]` as configurable defaults.
 - Use motion speed `100` mm/s and poll every `50` ms; report moving from non-zero simulator axis speed.
 - Disallow Home and position edits during a sequence, and snapshot pickup/placement coordinates at sequence start to prevent moving targets.
+- Use a single stream for all telemerty including current state, use get/set for cube and destination positions

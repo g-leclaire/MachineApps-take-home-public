@@ -40,7 +40,7 @@ If metadata docs and installed source disagree, installed source wins. Report th
 - React + TypeScript with strict types. No `any`.
 - Generate the client from the emitted `proto/app.proto` with Buf and `@connectrpc/connect-web`, as described in the communication doc. Do not hand-write fetch calls or duplicate backend types.
 - Build the README's dashboard and controls, using streams for live updates.
-- Show errors and the fault state clearly (distinct colour and message), and a way to reset.
+- Create new React component as often as needed to encapsulate features. Each component should have its own CSS file when styles are needed.
 
 ## Workflow
 

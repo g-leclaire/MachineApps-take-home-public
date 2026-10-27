@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 
+import type { Telemetry } from '../gen/app_pb'
 import { gantryClient } from '../rpc/gantry-client'
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'An unexpected request error occurred.'
 }
 
-export function useMachineState(reconnectDelayMs = 1000) {
-  const [machineState, setMachineState] = useState<string | null>(null)
-  const [machineError, setMachineError] = useState<string | null>(null)
+export function useTelemetry(reconnectDelayMs = 1000) {
+  const [telemetry, setTelemetry] = useState<Telemetry | null>(null)
   const [connectionError, setConnectionError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -18,9 +18,8 @@ export function useMachineState(reconnectDelayMs = 1000) {
     const subscribe = async () => {
       while (!signal.aborted) {
         try {
-          for await (const status of gantryClient.machineStatusStream(signal)) {
-            setMachineState(status.state)
-            setMachineError(status.error === '' ? null : status.error)
+          for await (const update of gantryClient.telemetryStream(signal)) {
+            setTelemetry(update)
             setConnectionError(null)
           }
         } catch (error: unknown) {
@@ -38,5 +37,5 @@ export function useMachineState(reconnectDelayMs = 1000) {
     return () => abortController.abort()
   }, [reconnectDelayMs])
 
-  return { machineState, machineError, connectionError }
+  return { telemetry, connectionError }
 }

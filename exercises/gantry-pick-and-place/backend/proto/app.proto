@@ -4,6 +4,11 @@ package vention.app.v1;
 import "google/protobuf/empty.proto";
 
 
+message TargetPositions {
+  repeated double cube_position = 1;
+  repeated double destination_position = 2;
+}
+
 message StateResponse {
   string state = 1;
   string last_state = 2;
@@ -26,16 +31,21 @@ message TriggerResponse {
   string new_state = 3;
 }
 
-message MachineStatus {
+message Telemetry {
   string state = 1;
   string error = 2;
+  repeated double position = 3;
+  bool gripper_closed = 4;
+  bool moving = 5;
 }
 
 service GantryPickAndPlaceService {
+  rpc get_target_positions (google.protobuf.Empty) returns (TargetPositions);
+  rpc set_target_positions (TargetPositions) returns (TargetPositions);
   rpc GetState (google.protobuf.Empty) returns (StateResponse);
   rpc GetHistory (google.protobuf.Empty) returns (HistoryResponse);
   rpc Trigger_Home (google.protobuf.Empty) returns (TriggerResponse);
   rpc Trigger_Begin_sequence (google.protobuf.Empty) returns (TriggerResponse);
   rpc Trigger_Reset (google.protobuf.Empty) returns (TriggerResponse);
-  rpc MachineStatusStream (google.protobuf.Empty) returns (stream MachineStatus);
+  rpc TelemetryStream (google.protobuf.Empty) returns (stream Telemetry);
 }

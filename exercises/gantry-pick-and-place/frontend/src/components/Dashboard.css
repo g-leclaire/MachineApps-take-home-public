@@ -140,6 +140,25 @@
   border-left: 7px solid currentColor;
 }
 
+.telemetry-grid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  border-bottom: 1px solid #cbd4ce;
+}
+
+.telemetry-grid > div {
+  padding: 20px 20px 22px 0;
+}
+
+.telemetry-grid dd {
+  margin: 12px 0 0;
+  color: #193b30;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 .error-message {
   margin: 18px 0 0;
   color: #a13d34;
