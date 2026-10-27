@@ -57,7 +57,7 @@ Triggers: `home`, `begin_sequence`, a distinct `finished_*` trigger for each mot
 - [ ] Gripper states: sync entry callbacks perform the gripper action, then schedule the matching internal one-shot `finished_gripping` or `finished_releasing` trigger (for example with `self.spawn(...)`) so the sequence advances without waiting for a motion loop.
 - [ ] Wrap the motion coroutine in try/except so unexpected exceptions store `last_error` and fire `to_fault`; handle returned simulator errors as specified in [AGENTS.md](AGENTS.md).
 - [ ] Validate simulator inputs at the API boundary according to [AGENTS.md](AGENTS.md).
-- [ ] Expose RPC with `build_state_machine_rpc_bundle(state_machine, triggers=["home", "begin_sequence", "reset"])` so all `finished_*` triggers stay internal.
+- [x] Expose RPC with `build_state_machine_rpc_bundle(state_machine, triggers=["home", "begin_sequence", "reset"])` so all `finished_*` triggers stay internal.
 
 ### API (README: "API Endpoints")
 
@@ -66,7 +66,7 @@ Triggers: `home`, `begin_sequence`, a distinct `finished_*` trigger for each mot
 - [ ] Actions: `Home Robot`, `Start Sequence`, `Get Status`.
 - [ ] Validate set-position inputs at the boundary according to [AGENTS.md](AGENTS.md).
 - [ ] Stream: telemetry with position, gripper state, moving/idle, cube start, destination, state machine state.
-- [ ] Register the state machine bundle with `app.register_rpc_plugin(...)`, then `app.finalize()` last; confirm `proto/app.proto` is emitted.
+- [x] Register the state machine bundle with `app.register_rpc_plugin(...)`, then `app.finalize()` last; confirm `proto/app.proto` is emitted.
 
 ### Checks
 
@@ -75,12 +75,12 @@ Triggers: `home`, `begin_sequence`, a distinct `finished_*` trigger for each mot
 
 ## Phase 2: Frontend (mandatory)
 
-- [ ] Scaffold Vite + React + TypeScript (strict).
-- [ ] Generate the client from `proto/app.proto` with Buf and `@connectrpc/connect-web`.
+- [x] Scaffold Vite + React + TypeScript (strict).
+- [x] Generate the client from `proto/app.proto` with Buf and `@connectrpc/connect-web`.
 - [ ] Dashboard: robot X/Y/Z, cube start, destination, gripper open/closed, moving/idle, state machine state (from the stream).
 - [ ] Controls: cube start and destination inputs, Home button, Start Sequence button.
 - [ ] Visuals: distinct fault state and error message, reset button, clear indication of the current state.
-- [ ] `npm run build` and lint/type check pass.
+- [x] `npm run build` and lint/type check pass.
 
 ## Phase 3: End-to-end check
 

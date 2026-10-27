@@ -1,0 +1,177 @@
+.dashboard-shell {
+  width: min(100% - 40px, 1180px);
+  min-height: 100vh;
+  margin: 0 auto;
+}
+
+.topbar {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d6ddd8;
+}
+
+.wordmark,
+.connection-status,
+.eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wordmark span {
+  color: #78857d;
+  padding: 0 0.3rem;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #315d4d;
+}
+
+.connection-status span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #368b65;
+}
+
+.connection-status.is-offline {
+  color: #a13d34;
+}
+
+.connection-status.is-offline span {
+  background: #c2493e;
+}
+
+.dashboard-content {
+  padding: 54px 0;
+}
+
+.page-heading {
+  margin-bottom: 38px;
+}
+
+.eyebrow {
+  color: #68776e;
+}
+
+.page-heading h1 {
+  margin: 9px 0 0;
+  font-size: 2rem;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.65fr);
+  border-top: 1px solid #cbd4ce;
+  border-bottom: 1px solid #cbd4ce;
+}
+
+.state-panel,
+.sequence-panel {
+  min-height: 190px;
+  padding: 24px 28px 26px 0;
+}
+
+.sequence-panel {
+  border-left: 1px solid #cbd4ce;
+  padding-left: 28px;
+  padding-right: 0;
+}
+
+.state-value {
+  margin: 25px 0 0;
+  color: #193b30;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: capitalize;
+}
+
+.is-fault .state-value {
+  color: #a13d34;
+}
+
+.start-button {
+  min-height: 44px;
+  margin-top: 18px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 3px;
+  background: #28664d;
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.start-button:hover:not(:disabled) {
+  background: #1d523d;
+}
+
+.start-button:focus-visible {
+  outline: 3px solid #92bea8;
+  outline-offset: 3px;
+}
+
+.start-button:disabled {
+  background: #aab6af;
+  cursor: not-allowed;
+}
+
+.play-icon {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid currentColor;
+}
+
+.error-message {
+  margin: 18px 0 0;
+  color: #a13d34;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .dashboard-shell {
+    width: min(100% - 32px, 1180px);
+  }
+
+  .dashboard-content {
+    padding: 38px 0;
+  }
+
+  .control-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .state-panel,
+  .sequence-panel {
+    min-height: auto;
+    padding: 22px 0;
+  }
+
+  .sequence-panel {
+    border-left: 0;
+    border-top: 1px solid #cbd4ce;
+  }
+
+  .state-value {
+    margin-top: 16px;
+    font-size: 1.6rem;
+  }
+}

@@ -1,16 +1,32 @@
-import asyncio
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
-from robot_control import GantryMachine, Triggers
+from fastapi import FastAPI
+from communication.app import VentionApp
+from state_machine.vention_communication import build_state_machine_rpc_bundle
 
-async def main() -> None:
-    machine = GantryMachine()
-    await machine.start()
-    machine.trigger(Triggers.begin_sequence.name)
-    
-    while machine.state not in {"ready", "fault"}:
-        await asyncio.sleep(0.05)
-
-    await machine.stop_background_tasks()
+from robot_control import GantryMachine
 
 
-asyncio.run(main())
+state_machine = GantryMachine()
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
+    await state_machine.start()
+    try:
+        yield
+    finally:
+        await state_machine.cancel_tasks()
+
+
+app = VentionApp(name="GantryPickAndPlace", emit_proto=True, lifespan=lifespan)
+app.register_rpc_plugin(
+    build_state_machine_rpc_bundle(
+        state_machine,
+        triggers=["home", "begin_sequence", "reset"],
+    )
+)
+
+
+app.finalize()

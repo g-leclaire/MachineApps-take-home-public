@@ -6,15 +6,21 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run lint && npm run typecheck && vite build",
+    "generate": "buf generate ../backend/proto",
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bufbuild/protobuf": "^2.16.0",
+    "@connectrpc/connect": "^2.3.0",
+    "@connectrpc/connect-web": "^2.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@bufbuild/buf": "^1.75.0",
+    "@bufbuild/protoc-gen-es": "^2.16.0",
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",

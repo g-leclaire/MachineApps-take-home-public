@@ -1,11 +1,7 @@
-import './App.css'
+import Dashboard from './components/Dashboard'
 
 function App() {
-  return (
-    <main className="app-shell">
-      <h1>Gantry Pick &amp; Place</h1>
-    </main>
-  )
+  return <Dashboard />
 }
 
 export default App
