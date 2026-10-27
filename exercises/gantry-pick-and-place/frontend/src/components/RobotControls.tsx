@@ -3,43 +3,60 @@ import { useState } from 'react'
 import { gantryClient } from '../rpc/gantry-client'
 import './RobotControls.css'
 
+type ControlAction = 'start' | 'home'
+
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'An unexpected request error occurred.'
 }
 
 interface RobotControlsProps {
-  canStart: boolean
+  machineState: string | null
+  connected: boolean
 }
 
-function RobotControls({ canStart }: RobotControlsProps) {
+function RobotControls({ machineState, connected }: RobotControlsProps) {
   const [error, setError] = useState<string | null>(null)
-  const [isStarting, setIsStarting] = useState(false)
+  const [pendingAction, setPendingAction] = useState<ControlAction | null>(null)
 
-  const startSequence = async () => {
-    setIsStarting(true)
+  const run = async (action: ControlAction, request: () => Promise<unknown>) => {
+    setPendingAction(action)
     setError(null)
 
     try {
-      await gantryClient.startSequence()
+      await request()
     } catch (caught: unknown) {
       setError(errorMessage(caught))
     } finally {
-      setIsStarting(false)
+      setPendingAction(null)
     }
   }
 
+  const isReady = connected && machineState === 'ready'
+  const canHome = connected && (machineState === 'ready' || machineState === 'fault')
+  const busy = pendingAction !== null
+
   return (
-    <section className="sequence-panel" aria-label="Sequence controls">
-      <p className="eyebrow">SEQUENCE</p>
-      <button
-        className="start-button"
-        type="button"
-        onClick={() => void startSequence()}
-        disabled={!canStart || isStarting}
-      >
-        <span className="play-icon" aria-hidden="true" />
-        {isStarting ? 'Starting…' : 'Start sequence'}
-      </button>
+    <section className="sequence-panel" aria-label="Robot controls">
+      <p className="eyebrow">CONTROLS</p>
+      <div className="control-buttons">
+        <button
+          className="start-button"
+          type="button"
+          onClick={() => void run('start', gantryClient.startSequence)}
+          disabled={!isReady || busy}
+        >
+          <span className="play-icon" aria-hidden="true" />
+          {pendingAction === 'start' ? 'Starting…' : 'Start sequence'}
+        </button>
+        <button
+          className="start-button is-secondary"
+          type="button"
+          onClick={() => void run('home', gantryClient.home)}
+          disabled={!canHome || busy}
+        >
+          {pendingAction === 'home' ? 'Homing…' : 'Home'}
+        </button>
+      </div>
       {error && (
         <p className="error-message" role="alert">
           {error}

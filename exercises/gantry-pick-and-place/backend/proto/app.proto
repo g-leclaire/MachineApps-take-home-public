@@ -46,6 +46,5 @@ service GantryPickAndPlaceService {
   rpc GetHistory (google.protobuf.Empty) returns (HistoryResponse);
   rpc Trigger_Home (google.protobuf.Empty) returns (TriggerResponse);
   rpc Trigger_Begin_sequence (google.protobuf.Empty) returns (TriggerResponse);
-  rpc Trigger_Reset (google.protobuf.Empty) returns (TriggerResponse);
   rpc TelemetryStream (google.protobuf.Empty) returns (stream Telemetry);
 }

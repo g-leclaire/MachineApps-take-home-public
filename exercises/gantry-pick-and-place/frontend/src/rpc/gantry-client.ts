@@ -18,5 +18,6 @@ export const gantryClient = {
   getTargetPositions: () => rpcClient.get_target_positions(create(EmptySchema)),
   setTargetPositions: (cubePosition: number[], destinationPosition: number[]) =>
     rpcClient.set_target_positions(create(TargetPositionsSchema, { cubePosition, destinationPosition })),
+  home: () => rpcClient.trigger_Home(create(EmptySchema)),
   startSequence: () => rpcClient.trigger_Begin_sequence(create(EmptySchema)),
 }

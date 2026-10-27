@@ -36,11 +36,11 @@ class Triggers:
     finished_releasing = Trigger("finished_releasing")
     finished_lifting_after_release = Trigger("finished_lifting_after_release")
     to_fault = Trigger("to_fault")
-    reset = Trigger("reset")
 
 TRANSITIONS = [
     Triggers.start.transition("ready", "ready"),
     Triggers.home.transition("ready", States.pick_place.homing),
+    Triggers.home.transition("fault", States.pick_place.homing),
     Triggers.finished_homing.transition(States.pick_place.homing, "ready"),
     Triggers.begin_sequence.transition("ready", States.pick_place.moving_to_cube),
     Triggers.finished_moving_to_cube.transition(States.pick_place.moving_to_cube, States.pick_place.lowering_at_cube),
@@ -51,7 +51,6 @@ TRANSITIONS = [
     Triggers.finished_lowering_at_destination.transition(States.pick_place.lowering_at_destination, States.pick_place.releasing),
     Triggers.finished_releasing.transition(States.pick_place.releasing, States.pick_place.lifting_after_release),
     Triggers.finished_lifting_after_release.transition(States.pick_place.lifting_after_release, "ready"),
-    Triggers.reset.transition("*", "ready"),
 ]
 
 class GantryMachine(StateMachine):
@@ -75,17 +74,35 @@ class GantryMachine(StateMachine):
     def clear_error(self, _):
         self.last_error = None
 
-    @on_enter_state(States.pick_place.moving_to_cube)
-    @auto_timeout(20.0, Triggers.to_fault)
-    def enter_moving_to_cube(self, _):
-        print("Entering moving_to_cube")
-        target = [self.cube_position[0], self.cube_position[1], self.safe_travel_z]
-        self.spawn(self._move_to(target, Triggers.finished_moving_to_cube))
+    @on_enter_state("fault")
+    def enter_fault(self, _) -> None:
+        self._clear_all_timeouts()
+        for task in list(self._tasks):
+            task.cancel()
+        self.robot.axis_speed = [0, 0, 0]
 
-    async def _move_to(self, target: list[float], completion_trigger: Trigger) -> None:
+    @on_enter_state(States.pick_place.homing)
+    @auto_timeout(30.0, Triggers.to_fault)
+    def enter_homing(self, _):
+        print("Entering homing")
+        self.spawn(self._move_home())
+
+    async def _move_home(self) -> None:
+        await self._run_motion(
+            lambda: self.robot.move_home(speed=self.motion_speed),
+            self.robot.home_position,
+            Triggers.finished_homing,
+        )
+
+    async def _run_motion(
+        self,
+        step: Callable[[], tuple[list[float], list[float], str | None]],
+        target: list[float],
+        completion_trigger: Trigger,
+    ) -> None:
         try:
             while True:
-                position, _, error = self.robot.move_to(target, speed=self.motion_speed)
+                position, _, error = step()
                 print(f"Current position: {[round(coordinate) for coordinate in position]}")
                 if error:
                     self.last_error = error
@@ -105,6 +122,18 @@ class GantryMachine(StateMachine):
         except Exception as error:
             self.last_error = str(error)
             self.trigger(Triggers.to_fault.name)
+
+    @on_enter_state(States.pick_place.moving_to_cube)
+    @auto_timeout(20.0, Triggers.to_fault)
+    def enter_moving_to_cube(self, _):
+        print("Entering moving_to_cube")
+        target = [self.cube_position[0], self.cube_position[1], self.safe_travel_z]
+        self.spawn(self._move_to(target, Triggers.finished_moving_to_cube))
+
+    async def _move_to(self, target: list[float], completion_trigger: Trigger) -> None:
+        await self._run_motion(
+            lambda: self.robot.move_to(target, speed=self.motion_speed), target, completion_trigger
+        )
 
     @on_enter_state(States.pick_place.lowering_at_cube)
     @auto_timeout(10.0, Triggers.to_fault)

@@ -38,7 +38,7 @@ function Dashboard() {
             <p className="state-value">{stateLabel(machineState)}</p>
           </section>
 
-          <RobotControls canStart={machineState === 'ready' && connectionError === null} />
+          <RobotControls machineState={machineState} connected={connectionError === null} />
         </div>
 
         <dl className="telemetry-grid" aria-label="Telemetry">

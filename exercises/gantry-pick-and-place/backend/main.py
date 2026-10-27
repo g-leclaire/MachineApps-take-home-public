@@ -103,7 +103,7 @@ app = VentionApp(name="GantryPickAndPlace", emit_proto=True, lifespan=lifespan)
 app.register_rpc_plugin(
     build_state_machine_rpc_bundle(
         state_machine,
-        triggers=["home", "begin_sequence", "reset"],
+        triggers=["home", "begin_sequence"],
     )
 )
 
