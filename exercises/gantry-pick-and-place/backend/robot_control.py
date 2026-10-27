@@ -69,6 +69,10 @@ class GantryMachine(StateMachine):
             enable_last_state_recovery=False
         )
 
+    @on_enter_state("ready")
+    def clear_error(self, _):
+        self.last_error = None
+
     @on_enter_state(States.pick_place.moving_to_cube)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_moving_to_cube(self, _):

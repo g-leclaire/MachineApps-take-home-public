@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { useMachineState } from '../hooks/useMachineState'
-import { gantryClient } from '../lib/gantry-client'
+import { gantryClient } from '../rpc/gantry-client'
 import './Dashboard.css'
 
 function stateLabel(state: string | null): string {
@@ -14,7 +14,7 @@ function errorMessage(error: unknown): string {
 }
 
 function Dashboard() {
-  const { machineState, connectionError } = useMachineState()
+  const { machineState, machineError, connectionError } = useMachineState()
   const [actionError, setActionError] = useState<string | null>(null)
   const [isStarting, setIsStarting] = useState(false)
 
@@ -71,9 +71,13 @@ function Dashboard() {
           </section>
         </div>
 
-        {(connectionError || actionError) && (
+        {(connectionError || machineError || actionError) && (
           <p className="error-message" role="alert">
-            {connectionError ? `Backend unavailable: ${connectionError}` : actionError}
+            {connectionError
+              ? `Backend unavailable: ${connectionError}`
+              : machineError
+                ? `Fault: ${machineError}`
+                : actionError}
           </p>
         )}
       </section>

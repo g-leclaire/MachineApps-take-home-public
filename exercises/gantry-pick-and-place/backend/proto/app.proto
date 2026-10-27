@@ -26,10 +26,16 @@ message TriggerResponse {
   string new_state = 3;
 }
 
+message MachineStatus {
+  string state = 1;
+  string error = 2;
+}
+
 service GantryPickAndPlaceService {
   rpc GetState (google.protobuf.Empty) returns (StateResponse);
   rpc GetHistory (google.protobuf.Empty) returns (HistoryResponse);
   rpc Trigger_Home (google.protobuf.Empty) returns (TriggerResponse);
   rpc Trigger_Begin_sequence (google.protobuf.Empty) returns (TriggerResponse);
   rpc Trigger_Reset (google.protobuf.Empty) returns (TriggerResponse);
+  rpc MachineStatusStream (google.protobuf.Empty) returns (stream MachineStatus);
 }

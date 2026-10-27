@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file app.proto.
  */
 export const file_app: GenFile = /*@__PURE__*/
-  fileDesc("CglhcHAucHJvdG8SDnZlbnRpb24uYXBwLnYxIjIKDVN0YXRlUmVzcG9uc2USDQoFc3RhdGUYASABKAkSEgoKbGFzdF9zdGF0ZRgCIAEoCSJFCgxIaXN0b3J5RW50cnkSEQoJdGltZXN0YW1wGAEgASgJEg0KBXN0YXRlGAIgASgJEhMKC2R1cmF0aW9uX21zGAMgASgFIlUKD0hpc3RvcnlSZXNwb25zZRItCgdoaXN0b3J5GAEgAygLMhwudmVudGlvbi5hcHAudjEuSGlzdG9yeUVudHJ5EhMKC2J1ZmZlcl9zaXplGAIgASgFIkwKD1RyaWdnZXJSZXNwb25zZRIOCgZyZXN1bHQYASABKAkSFgoOcHJldmlvdXNfc3RhdGUYAiABKAkSEQoJbmV3X3N0YXRlGAMgASgJMosDChlHYW50cnlQaWNrQW5kUGxhY2VTZXJ2aWNlEkEKCEdldFN0YXRlEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Gh0udmVudGlvbi5hcHAudjEuU3RhdGVSZXNwb25zZRJFCgpHZXRIaXN0b3J5EhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Gh8udmVudGlvbi5hcHAudjEuSGlzdG9yeVJlc3BvbnNlEkcKDFRyaWdnZXJfSG9tZRIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRofLnZlbnRpb24uYXBwLnYxLlRyaWdnZXJSZXNwb25zZRJRChZUcmlnZ2VyX0JlZ2luX3NlcXVlbmNlEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Gh8udmVudGlvbi5hcHAudjEuVHJpZ2dlclJlc3BvbnNlEkgKDVRyaWdnZXJfUmVzZXQSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHy52ZW50aW9uLmFwcC52MS5UcmlnZ2VyUmVzcG9uc2ViBnByb3RvMw", [file_google_protobuf_empty]);
+  fileDesc("CglhcHAucHJvdG8SDnZlbnRpb24uYXBwLnYxIjIKDVN0YXRlUmVzcG9uc2USDQoFc3RhdGUYASABKAkSEgoKbGFzdF9zdGF0ZRgCIAEoCSJFCgxIaXN0b3J5RW50cnkSEQoJdGltZXN0YW1wGAEgASgJEg0KBXN0YXRlGAIgASgJEhMKC2R1cmF0aW9uX21zGAMgASgFIlUKD0hpc3RvcnlSZXNwb25zZRItCgdoaXN0b3J5GAEgAygLMhwudmVudGlvbi5hcHAudjEuSGlzdG9yeUVudHJ5EhMKC2J1ZmZlcl9zaXplGAIgASgFIkwKD1RyaWdnZXJSZXNwb25zZRIOCgZyZXN1bHQYASABKAkSFgoOcHJldmlvdXNfc3RhdGUYAiABKAkSEQoJbmV3X3N0YXRlGAMgASgJIi0KDU1hY2hpbmVTdGF0dXMSDQoFc3RhdGUYASABKAkSDQoFZXJyb3IYAiABKAky2wMKGUdhbnRyeVBpY2tBbmRQbGFjZVNlcnZpY2USQQoIR2V0U3RhdGUSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHS52ZW50aW9uLmFwcC52MS5TdGF0ZVJlc3BvbnNlEkUKCkdldEhpc3RvcnkSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHy52ZW50aW9uLmFwcC52MS5IaXN0b3J5UmVzcG9uc2USRwoMVHJpZ2dlcl9Ib21lEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Gh8udmVudGlvbi5hcHAudjEuVHJpZ2dlclJlc3BvbnNlElEKFlRyaWdnZXJfQmVnaW5fc2VxdWVuY2USFi5nb29nbGUucHJvdG9idWYuRW1wdHkaHy52ZW50aW9uLmFwcC52MS5UcmlnZ2VyUmVzcG9uc2USSAoNVHJpZ2dlcl9SZXNldBIWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRofLnZlbnRpb24uYXBwLnYxLlRyaWdnZXJSZXNwb25zZRJOChNNYWNoaW5lU3RhdHVzU3RyZWFtEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Gh0udmVudGlvbi5hcHAudjEuTWFjaGluZVN0YXR1czABYgZwcm90bzM", [file_google_protobuf_empty]);
 
 /**
  * @generated from message vention.app.v1.StateResponse
@@ -113,6 +113,28 @@ export const TriggerResponseSchema: GenMessage<TriggerResponse> = /*@__PURE__*/
   messageDesc(file_app, 3);
 
 /**
+ * @generated from message vention.app.v1.MachineStatus
+ */
+export type MachineStatus = Message<"vention.app.v1.MachineStatus"> & {
+  /**
+   * @generated from field: string state = 1;
+   */
+  state: string;
+
+  /**
+   * @generated from field: string error = 2;
+   */
+  error: string;
+};
+
+/**
+ * Describes the message vention.app.v1.MachineStatus.
+ * Use `create(MachineStatusSchema)` to create a new message.
+ */
+export const MachineStatusSchema: GenMessage<MachineStatus> = /*@__PURE__*/
+  messageDesc(file_app, 4);
+
+/**
  * @generated from service vention.app.v1.GantryPickAndPlaceService
  */
 export const GantryPickAndPlaceService: GenService<{
@@ -155,6 +177,14 @@ export const GantryPickAndPlaceService: GenService<{
     methodKind: "unary";
     input: typeof EmptySchema;
     output: typeof TriggerResponseSchema;
+  },
+  /**
+   * @generated from rpc vention.app.v1.GantryPickAndPlaceService.MachineStatusStream
+   */
+  machineStatusStream: {
+    methodKind: "server_streaming";
+    input: typeof EmptySchema;
+    output: typeof MachineStatusSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_app, 0);
