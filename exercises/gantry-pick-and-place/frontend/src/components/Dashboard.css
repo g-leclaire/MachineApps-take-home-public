@@ -50,22 +50,11 @@
 }
 
 .dashboard-content {
-  padding: 54px 0;
-}
-
-.page-heading {
-  margin-bottom: 38px;
+  padding: 0 0 54px 0;
 }
 
 .eyebrow {
   color: #68776e;
-}
-
-.page-heading h1 {
-  margin: 9px 0 0;
-  font-size: 2rem;
-  font-weight: 650;
-  line-height: 1.15;
 }
 
 .control-grid {
@@ -171,7 +160,7 @@
   }
 
   .dashboard-content {
-    padding: 38px 0;
+    padding: 0 0 38px 0;
   }
 
   .control-grid {

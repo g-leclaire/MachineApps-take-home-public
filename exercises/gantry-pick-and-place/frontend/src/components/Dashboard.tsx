@@ -46,7 +46,7 @@ function Dashboard() {
   return (
     <main className="dashboard-shell">
       <header className="topbar">
-        <p className="wordmark">GANTRY <span>/</span> PICK &amp; PLACE</p>
+        <h1 className="wordmark" id="page-title">GANTRY PICK &amp; PLACE</h1>
         <p className={`connection-status ${connectionError ? 'is-offline' : ''}`}>
           <span aria-hidden="true" />
           {connectionStatus}
@@ -54,11 +54,6 @@ function Dashboard() {
       </header>
 
       <section className="dashboard-content" aria-labelledby="page-title">
-        <div className="page-heading">
-          <p className="eyebrow">MACHINE CONTROL</p>
-          <h1 id="page-title">Pick-and-place</h1>
-        </div>
-
         <div className="control-grid">
           <section className={`state-panel ${isFault ? 'is-fault' : ''}`} aria-live="polite">
             <p className="eyebrow">CURRENT STATE</p>
