@@ -146,4 +146,4 @@ class GantryMachine(StateMachine):
     def enter_lifting_after_release(self, _):
         print("Entering lifting_after_release")
         target = [self.destination_position[0], self.destination_position[1], self.safe_travel_z]
-        self.spawn(self._move_to(target, Triggers.finished_lifting_with_cube))
+        self.spawn(self._move_to(target, Triggers.finished_lifting_after_release))
