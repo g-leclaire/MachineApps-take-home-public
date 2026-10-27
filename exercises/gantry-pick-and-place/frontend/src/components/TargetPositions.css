@@ -13,9 +13,8 @@
   margin: 0;
   padding: 0;
   border: 0;
-  display: grid;
-  grid-template-columns: 140px repeat(3, minmax(0, 120px));
-  align-items: end;
+  display: flex;
+  width: 100%;
   gap: 12px;
 }
 
@@ -24,10 +23,12 @@
   width: 140px;
   padding: 0;
   align-self: center;
+  flex-shrink: 0;
 }
 
 .target-row label {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
   font-size: 0.72rem;
   font-weight: 700;
@@ -35,7 +36,10 @@
 }
 
 .target-row input {
+  display: flex;
+  width: 100%;
   min-height: 36px;
+  min-width: 70px;
   padding: 0 8px;
   border: 1px solid #aab6af;
   border-radius: 3px;
@@ -49,13 +53,3 @@
   color: #78857d;
 }
 
-@media (max-width: 640px) {
-  .target-row {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .target-row legend {
-    grid-column: 1 / -1;
-    float: none;
-  }
-}
