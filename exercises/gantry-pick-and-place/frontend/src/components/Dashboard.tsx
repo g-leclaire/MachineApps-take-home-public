@@ -1,8 +1,6 @@
-import { useState } from 'react'
-
 import { useTelemetry } from '../hooks/useTelemetry'
+import RobotControls from './RobotControls'
 import TargetPositions from './TargetPositions'
-import { gantryClient } from '../rpc/gantry-client'
 import './Dashboard.css'
 
 function stateLabel(state: string | null): string {
@@ -15,30 +13,10 @@ function formatPosition(position: readonly number[] | undefined): string {
   return position.map((value) => value.toFixed(1)).join(', ')
 }
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : 'An unexpected request error occurred.'
-}
-
 function Dashboard() {
   const { telemetry, connectionError } = useTelemetry()
   const machineState = telemetry?.state ?? null
   const machineError = telemetry?.error ? telemetry.error : null
-  const [actionError, setActionError] = useState<string | null>(null)
-  const [isStarting, setIsStarting] = useState(false)
-
-  const startSequence = async () => {
-    setIsStarting(true)
-    setActionError(null)
-
-    try {
-      await gantryClient.startSequence()
-      setActionError(null)
-    } catch (error: unknown) {
-      setActionError(errorMessage(error))
-    } finally {
-      setIsStarting(false)
-    }
-  }
 
   const connectionStatus = connectionError ? 'Offline' : machineState ? 'Connected' : 'Connecting'
   const isFault = machineState === 'fault'
@@ -60,18 +38,7 @@ function Dashboard() {
             <p className="state-value">{stateLabel(machineState)}</p>
           </section>
 
-          <section className="sequence-panel" aria-label="Sequence controls">
-            <p className="eyebrow">SEQUENCE</p>
-            <button
-              className="start-button"
-              type="button"
-              onClick={() => void startSequence()}
-              disabled={machineState !== 'ready' || isStarting || connectionError !== null}
-            >
-              <span className="play-icon" aria-hidden="true" />
-              {isStarting ? 'Starting…' : 'Start sequence'}
-            </button>
-          </section>
+          <RobotControls canStart={machineState === 'ready' && connectionError === null} />
         </div>
 
         <dl className="telemetry-grid" aria-label="Telemetry">
@@ -91,13 +58,9 @@ function Dashboard() {
 
         <TargetPositions canEdit={machineState === 'ready' && connectionError === null} />
 
-        {(connectionError || machineError || actionError) && (
+        {(connectionError || machineError) && (
           <p className="error-message" role="alert">
-            {connectionError
-              ? `Backend unavailable: ${connectionError}`
-              : machineError
-                ? `Fault: ${machineError}`
-                : actionError}
+            {connectionError ? `Backend unavailable: ${connectionError}` : `Fault: ${machineError}`}
           </p>
         )}
       </section>

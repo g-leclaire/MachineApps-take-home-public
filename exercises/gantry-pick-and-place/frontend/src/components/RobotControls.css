@@ -1,0 +1,22 @@
+.sequence-panel {
+  min-height: 190px;
+  padding: 24px 0 26px 28px;
+  border-left: 1px solid #cbd4ce;
+}
+
+.play-icon {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid currentColor;
+}
+
+@media (max-width: 640px) {
+  .sequence-panel {
+    min-height: auto;
+    padding: 22px 0;
+    border-left: 0;
+    border-top: 1px solid #cbd4ce;
+  }
+}

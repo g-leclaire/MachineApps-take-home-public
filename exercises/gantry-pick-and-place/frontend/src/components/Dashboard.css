@@ -64,16 +64,9 @@
   border-bottom: 1px solid #cbd4ce;
 }
 
-.state-panel,
-.sequence-panel {
+.state-panel {
   min-height: 190px;
   padding: 24px 28px 26px 0;
-}
-
-.sequence-panel {
-  border-left: 1px solid #cbd4ce;
-  padding-left: 28px;
-  padding-right: 0;
 }
 
 .state-value {
@@ -121,14 +114,6 @@
   cursor: not-allowed;
 }
 
-.play-icon {
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 7px solid currentColor;
-}
-
 .telemetry-grid {
   margin: 0;
   display: grid;
@@ -167,15 +152,9 @@
     grid-template-columns: 1fr;
   }
 
-  .state-panel,
-  .sequence-panel {
+  .state-panel {
     min-height: auto;
     padding: 22px 0;
-  }
-
-  .sequence-panel {
-    border-left: 0;
-    border-top: 1px solid #cbd4ce;
   }
 
   .state-value {
