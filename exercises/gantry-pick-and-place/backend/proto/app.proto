@@ -4,6 +4,10 @@ package vention.app.v1;
 import "google/protobuf/empty.proto";
 
 
+message RobotPosition {
+  repeated double position = 1;
+}
+
 message TargetPositions {
   repeated double cube_position = 1;
   repeated double destination_position = 2;
@@ -40,6 +44,8 @@ message Telemetry {
 }
 
 service GantryPickAndPlaceService {
+  rpc get_robot_position (google.protobuf.Empty) returns (RobotPosition);
+  rpc set_robot_position (RobotPosition) returns (RobotPosition);
   rpc get_target_positions (google.protobuf.Empty) returns (TargetPositions);
   rpc set_target_positions (TargetPositions) returns (TargetPositions);
   rpc GetState (google.protobuf.Empty) returns (StateResponse);

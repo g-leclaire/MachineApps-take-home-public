@@ -23,16 +23,29 @@ class Telemetry(BaseModel):
     moving: bool
 
 
+def _validate_coordinates(value: list[float]) -> list[float]:
+    if len(value) != 3 or not all(-1000 <= coordinate <= 1000 for coordinate in value):
+        raise ValueError("Expected three coordinates within [-1000, 1000]")
+    return value
+
+
+class RobotPosition(BaseModel):
+    position: list[float]
+
+    @field_validator("position")
+    @classmethod
+    def _validate_position(cls, value: list[float]) -> list[float]:
+        return _validate_coordinates(value)
+
+
 class TargetPositions(BaseModel):
     cube_position: list[float]
     destination_position: list[float]
 
     @field_validator("cube_position", "destination_position")
     @classmethod
-    def _valid_coordinates(cls, value: list[float]) -> list[float]:
-        if len(value) != 3 or not all(math.isfinite(c) and -1000 <= c <= 1000 for c in value):
-            raise ValueError("Expected three finite coordinates within [-1000, 1000]")
-        return value
+    def _validate_positions(cls, value: list[float]) -> list[float]:
+        return _validate_coordinates(value)
 
 
 state_machine = GantryMachine()
@@ -64,6 +77,24 @@ def _publish_if_changed(*_: object) -> None:
         return
     _last_telemetry = telemetry
     asyncio.get_running_loop().create_task(publish_telemetry(telemetry))
+
+
+@action()
+async def get_robot_position() -> RobotPosition:
+    return RobotPosition(position=list(state_machine.robot.current_position))
+
+
+@action()
+async def set_robot_position(position: RobotPosition) -> RobotPosition:
+    robot = state_machine.robot
+    if state_machine.state != "ready" or any(robot.axis_speed):
+        raise ConnectError(
+            code="failed_precondition",
+            message=f"Robot position can only be changed while ready and idle (state: '{state_machine.state}')",
+        )
+    state_machine.set_robot_position(position.position)
+    _publish_if_changed()
+    return position
 
 
 @action()

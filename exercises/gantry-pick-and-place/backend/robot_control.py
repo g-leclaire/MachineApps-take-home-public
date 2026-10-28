@@ -70,6 +70,9 @@ class GantryMachine(StateMachine):
             enable_last_state_recovery=False
         )
 
+    def set_robot_position(self, initial_position: list[float]) -> None:
+        self.robot = Robot(initial_position=list(initial_position))
+
     @on_enter_state("ready")
     def clear_error(self, _):
         self.last_error = None

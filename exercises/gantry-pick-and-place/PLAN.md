@@ -60,7 +60,7 @@ Triggers: `home`, `begin_sequence`, a distinct `finished_*` trigger for each mot
 ### API (README: "API Endpoints")
 
 - [x] Pydantic models for target-position requests/responses and telemetry status.
-- [ ] Actions: get/set robot position.
+- [x] Actions: get/set robot position (editable from the dashboard while the machine is ready and idle).
 - [x] Actions: get/set cube position and destination position.
 - [x] Actions: `Home Robot` and `Start Sequence`; status is supplied by telemetry.
 - [x] Validate set-position inputs at the boundary according to [AGENTS.md](AGENTS.md).
@@ -115,6 +115,7 @@ Record decisions here as they are made, for the final README write-up.
 - Fault handling is a sync `@on_enter_state("fault")` hook, not a `before` callback on a transition: callbacks passed through the transition table are never awaited by the library. The hook cancels all spawned tasks and pending timeouts, so a timeout-triggered fault cannot leave the robot still moving or fire a stale completion trigger later.
 - The fault hook also zeroes `robot.axis_speed`. The simulator has no stop call and `move_to` only plans a new move when all axis speeds are zero, so a stale velocity from an interrupted move would break the next move (the later Home).
 - Fault reporting: simulator errors (returned in the third tuple item) and unexpected exceptions are stored in `last_error` and fire `to_fault`; timeouts fault without a message. The telemetry `error` is only set while in `fault` (falling back to "Unknown fault") and `last_error` is cleared on entering `ready`, so an old error never carries into a later fault.
-- Motion speed is a fixed constant (100 mm/s, the simulator maximum) and not user-configurable, which avoids the simulator's out-of-range and speed-0 division-by-zero cases. Cube and destination coordinates are validated at the API boundary (three finite values within +/-1000) and can only be changed while `ready`.
+- Motion speed is a fixed constant (100 mm/s, the simulator maximum) and not user-configurable, which avoids the simulator's out-of-range and speed-0 division-by-zero cases. Cube and destination coordinates are validated at the API boundary (three values within +/-1000) and can only be changed while `ready`.
+- Robot position can be set directly while the machine is ready and idle; the change is published through telemetry.
 - Telemetry is published from the motion loop on every poll (currently every 100 ms) and on every state change, but only when the snapshot differs from the last one published, so idle periods send nothing and the stream stays at roughly 10 Hz while moving.
 - Don't add a get state action, instead rely on telemetry
