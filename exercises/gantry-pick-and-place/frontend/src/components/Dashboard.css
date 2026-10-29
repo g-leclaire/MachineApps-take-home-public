@@ -72,10 +72,9 @@
 .state-value {
   margin: 25px 0 0;
   color: #193b30;
-  font-size: 2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   line-height: 1.2;
-  text-transform: capitalize;
 }
 
 .is-fault .state-value {
@@ -155,10 +154,5 @@
   .state-panel {
     min-height: auto;
     padding: 22px 0;
-  }
-
-  .state-value {
-    margin-top: 16px;
-    font-size: 1.6rem;
   }
 }

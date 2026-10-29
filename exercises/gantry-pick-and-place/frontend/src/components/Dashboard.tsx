@@ -5,7 +5,7 @@ import './Dashboard.css'
 
 function stateLabel(state: string | null): string {
   if (!state) return 'Waiting for backend'
-  return state.replace(/^PickPlace_/, '').replaceAll('_', ' ')
+  return state.replace(/^PickPlace_/, '')
 }
 
 function formatPosition(position: readonly number[] | undefined): string {
