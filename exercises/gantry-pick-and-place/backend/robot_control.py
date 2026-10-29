@@ -9,13 +9,16 @@ from robot_sim import Robot
 
 
 class PickPlace(StateGroup):
-    homing = State()
-    moving_to_cube = State()
-    lowering_at_cube = State()
+    homing_lifting = State()
+    homing_traversing = State()
+    homing_lowering = State()
+    moving_to_cube_lifting = State()
+    moving_to_cube_traversing = State()
+    moving_to_cube_lowering = State()
     gripping = State()
-    lifting_with_cube = State()
-    moving_to_destination = State()
-    lowering_at_destination = State()
+    moving_to_destination_lifting = State()
+    moving_to_destination_traversing = State()
+    moving_to_destination_lowering = State()
     releasing = State()
     lifting_after_release = State()
 
@@ -26,29 +29,35 @@ class Triggers:
     start = Trigger("start")
     home = Trigger("home")
     begin_sequence = Trigger("begin_sequence")
-    finished_homing = Trigger("finished_homing")
-    finished_moving_to_cube = Trigger("finished_moving_to_cube")
-    finished_lowering_at_cube = Trigger("finished_lowering_at_cube")
+    finished_homing_lifting = Trigger("finished_homing_lifting")
+    finished_homing_traversing = Trigger("finished_homing_traversing")
+    finished_homing_lowering = Trigger("finished_homing_lowering")
+    finished_moving_to_cube_lifting = Trigger("finished_moving_to_cube_lifting")
+    finished_moving_to_cube_traversing = Trigger("finished_moving_to_cube_traversing")
+    finished_moving_to_cube_lowering = Trigger("finished_moving_to_cube_lowering")
     finished_gripping = Trigger("finished_gripping")
-    finished_lifting_with_cube = Trigger("finished_lifting_with_cube")
-    finished_moving_to_destination = Trigger("finished_moving_to_destination")
-    finished_lowering_at_destination = Trigger("finished_lowering_at_destination")
+    finished_moving_to_destination_lifting = Trigger("finished_moving_to_destination_lifting")
+    finished_moving_to_destination_traversing = Trigger("finished_moving_to_destination_traversing")
+    finished_moving_to_destination_lowering = Trigger("finished_moving_to_destination_lowering")
     finished_releasing = Trigger("finished_releasing")
     finished_lifting_after_release = Trigger("finished_lifting_after_release")
     to_fault = Trigger("to_fault")
 
 TRANSITIONS = [
     Triggers.start.transition("ready", "ready"),
-    Triggers.home.transition("ready", States.pick_place.homing),
-    Triggers.home.transition("fault", States.pick_place.homing),
-    Triggers.finished_homing.transition(States.pick_place.homing, "ready"),
-    Triggers.begin_sequence.transition("ready", States.pick_place.moving_to_cube),
-    Triggers.finished_moving_to_cube.transition(States.pick_place.moving_to_cube, States.pick_place.lowering_at_cube),
-    Triggers.finished_lowering_at_cube.transition(States.pick_place.lowering_at_cube, States.pick_place.gripping),
-    Triggers.finished_gripping.transition(States.pick_place.gripping, States.pick_place.lifting_with_cube),
-    Triggers.finished_lifting_with_cube.transition(States.pick_place.lifting_with_cube, States.pick_place.moving_to_destination),
-    Triggers.finished_moving_to_destination.transition(States.pick_place.moving_to_destination, States.pick_place.lowering_at_destination),
-    Triggers.finished_lowering_at_destination.transition(States.pick_place.lowering_at_destination, States.pick_place.releasing),
+    Triggers.home.transition("ready", States.pick_place.homing_lifting),
+    Triggers.home.transition("fault", States.pick_place.homing_lifting),
+    Triggers.finished_homing_lifting.transition(States.pick_place.homing_lifting, States.pick_place.homing_traversing),
+    Triggers.finished_homing_traversing.transition(States.pick_place.homing_traversing, States.pick_place.homing_lowering),
+    Triggers.finished_homing_lowering.transition(States.pick_place.homing_lowering, "ready"),
+    Triggers.begin_sequence.transition("ready", States.pick_place.moving_to_cube_lifting),
+    Triggers.finished_moving_to_cube_lifting.transition(States.pick_place.moving_to_cube_lifting, States.pick_place.moving_to_cube_traversing),
+    Triggers.finished_moving_to_cube_traversing.transition(States.pick_place.moving_to_cube_traversing, States.pick_place.moving_to_cube_lowering),
+    Triggers.finished_moving_to_cube_lowering.transition(States.pick_place.moving_to_cube_lowering, States.pick_place.gripping),
+    Triggers.finished_gripping.transition(States.pick_place.gripping, States.pick_place.moving_to_destination_lifting),
+    Triggers.finished_moving_to_destination_lifting.transition(States.pick_place.moving_to_destination_lifting, States.pick_place.moving_to_destination_traversing),
+    Triggers.finished_moving_to_destination_traversing.transition(States.pick_place.moving_to_destination_traversing, States.pick_place.moving_to_destination_lowering),
+    Triggers.finished_moving_to_destination_lowering.transition(States.pick_place.moving_to_destination_lowering, States.pick_place.releasing),
     Triggers.finished_releasing.transition(States.pick_place.releasing, States.pick_place.lifting_after_release),
     Triggers.finished_lifting_after_release.transition(States.pick_place.lifting_after_release, "ready"),
 ]
@@ -84,17 +93,37 @@ class GantryMachine(StateMachine):
             task.cancel()
         self.robot.axis_speed = [0, 0, 0]
 
-    @on_enter_state(States.pick_place.homing)
-    @auto_timeout(30.0, Triggers.to_fault)
-    def enter_homing(self, _):
-        print("Entering homing")
-        self.spawn(self._move_home())
+    @on_enter_state(States.pick_place.homing_lifting)
+    @auto_timeout(10.0, Triggers.to_fault)
+    def enter_homing_lifting(self, _):
+        print("Entering homing_lifting")
+        self.spawn(self._move_to(self._current_xy_at_safe_z(), Triggers.finished_homing_lifting))
 
-    async def _move_home(self) -> None:
+    def _current_xy_at_safe_z(self) -> list[float]:
+        return [self.robot.current_position[0], self.robot.current_position[1], self.safe_travel_z]
+
+    async def _move_to(self, target: list[float], completion_trigger: Trigger) -> None:
         await self._run_motion(
-            lambda: self.robot.move_home(speed=self.motion_speed),
-            self.robot.home_position,
-            Triggers.finished_homing,
+            lambda: self.robot.move_to(target, speed=self.motion_speed), target, completion_trigger
+        )
+
+    @on_enter_state(States.pick_place.homing_traversing)
+    @auto_timeout(20.0, Triggers.to_fault)
+    def enter_homing_traversing(self, _):
+        print("Entering homing_traversing")
+        target = [self.robot.home_position[0], self.robot.home_position[1], self.safe_travel_z]
+        self.spawn(self._move_to(target, Triggers.finished_homing_traversing))
+
+    @on_enter_state(States.pick_place.homing_lowering)
+    @auto_timeout(10.0, Triggers.to_fault)
+    def enter_homing_lowering(self, _):
+        print("Entering homing_lowering")
+        self.spawn(
+            self._run_motion(
+                lambda: self.robot.move_home(speed=self.motion_speed),
+                self.robot.home_position,
+                Triggers.finished_homing_lowering,
+            )
         )
 
     async def _run_motion(
@@ -126,24 +155,25 @@ class GantryMachine(StateMachine):
             self.last_error = str(error)
             self.trigger(Triggers.to_fault.name)
 
-    @on_enter_state(States.pick_place.moving_to_cube)
+    @on_enter_state(States.pick_place.moving_to_cube_lifting)
     @auto_timeout(20.0, Triggers.to_fault)
-    def enter_moving_to_cube(self, _):
-        print("Entering moving_to_cube")
+    def enter_moving_to_cube_lifting(self, _):
+        print("Entering moving_to_cube_lifting")
+        self.spawn(self._move_to(self._current_xy_at_safe_z(), Triggers.finished_moving_to_cube_lifting))
+
+    @on_enter_state(States.pick_place.moving_to_cube_traversing)
+    @auto_timeout(20.0, Triggers.to_fault)
+    def enter_moving_to_cube_traversing(self, _):
+        print("Entering moving_to_cube_traversing")
         target = [self.cube_position[0], self.cube_position[1], self.safe_travel_z]
-        self.spawn(self._move_to(target, Triggers.finished_moving_to_cube))
+        self.spawn(self._move_to(target, Triggers.finished_moving_to_cube_traversing))
 
-    async def _move_to(self, target: list[float], completion_trigger: Trigger) -> None:
-        await self._run_motion(
-            lambda: self.robot.move_to(target, speed=self.motion_speed), target, completion_trigger
-        )
-
-    @on_enter_state(States.pick_place.lowering_at_cube)
-    @auto_timeout(10.0, Triggers.to_fault)
-    def enter_lowering_at_cube(self, _):
-        print("Entering lowering_at_cube")
+    @on_enter_state(States.pick_place.moving_to_cube_lowering)
+    @auto_timeout(20.0, Triggers.to_fault)
+    def enter_moving_to_cube_lowering(self, _):
+        print("Entering moving_to_cube_lowering")
         target = [self.cube_position[0], self.cube_position[1], self.cube_position[2]]
-        self.spawn(self._move_to(target, Triggers.finished_lowering_at_cube))
+        self.spawn(self._move_to(target, Triggers.finished_moving_to_cube_lowering))
 
     @on_enter_state(States.pick_place.gripping)
     def enter_gripping(self, _):
@@ -151,26 +181,25 @@ class GantryMachine(StateMachine):
         self.robot.closed_gripper()
         self.trigger(Triggers.finished_gripping.name)
         
-    @on_enter_state(States.pick_place.lifting_with_cube)
-    @auto_timeout(10.0, Triggers.to_fault)
-    def enter_lifting_with_cube(self, _):
-        print("Entering lifting_with_cube")
-        target = [self.cube_position[0], self.cube_position[1], self.safe_travel_z]
-        self.spawn(self._move_to(target, Triggers.finished_lifting_with_cube))
-
-    @on_enter_state(States.pick_place.moving_to_destination)
+    @on_enter_state(States.pick_place.moving_to_destination_lifting)
     @auto_timeout(20.0, Triggers.to_fault)
-    def enter_moving_to_destination(self, _):
-        print("Entering moving_to_destination")
-        target = [self.destination_position[0], self.destination_position[1], self.safe_travel_z]
-        self.spawn(self._move_to(target, Triggers.finished_moving_to_destination))
+    def enter_moving_to_destination_lifting(self, _):
+        print("Entering moving_to_destination_lifting")
+        self.spawn(self._move_to(self._current_xy_at_safe_z(), Triggers.finished_moving_to_destination_lifting))
 
-    @on_enter_state(States.pick_place.lowering_at_destination)
-    @auto_timeout(10.0, Triggers.to_fault)
-    def enter_lowering_at_destination(self, _):
-        print("Entering lowering_at_destination")
+    @on_enter_state(States.pick_place.moving_to_destination_traversing)
+    @auto_timeout(30.0, Triggers.to_fault)
+    def enter_moving_to_destination_traversing(self, _):
+        print("Entering moving_to_destination_traversing")
+        target = [self.destination_position[0], self.destination_position[1], self.safe_travel_z]
+        self.spawn(self._move_to(target, Triggers.finished_moving_to_destination_traversing))
+
+    @on_enter_state(States.pick_place.moving_to_destination_lowering)
+    @auto_timeout(20.0, Triggers.to_fault)
+    def enter_moving_to_destination_lowering(self, _):
+        print("Entering moving_to_destination_lowering")
         target = [self.destination_position[0], self.destination_position[1], self.destination_position[2]]
-        self.spawn(self._move_to(target, Triggers.finished_lowering_at_destination))
+        self.spawn(self._move_to(target, Triggers.finished_moving_to_destination_lowering))
 
     @on_enter_state(States.pick_place.releasing)
     def enter_releasing(self, _):
