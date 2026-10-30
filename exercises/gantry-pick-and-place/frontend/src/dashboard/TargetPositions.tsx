@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { gantryClient } from '../rpc/gantry-client'
+import { gantryClient } from './gantryClient'
 import './TargetPositions.css'
 
 type Coordinates = [string, string, string]

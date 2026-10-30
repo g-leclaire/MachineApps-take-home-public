@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import type { Telemetry } from '../gen/app_pb'
-import { gantryClient } from '../rpc/gantry-client'
+import { gantryClient } from './gantryClient'
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'An unexpected request error occurred.'

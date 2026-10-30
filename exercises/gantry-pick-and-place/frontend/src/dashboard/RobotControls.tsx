@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { gantryClient } from '../rpc/gantry-client'
+import { gantryClient } from './gantryClient'
 import './RobotControls.css'
 
 type ControlAction = 'start' | 'home'
