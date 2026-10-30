@@ -97,8 +97,7 @@ def register_robot_api(
                 code="failed_precondition",
                 message=f"Positions can only be changed while ready (state: '{state_machine.state}')",
             )
-        state_machine.cube_position = list(positions.cube_position)
-        state_machine.destination_position = list(positions.destination_position)
+        state_machine.set_target_positions(positions.cube_position, positions.destination_position)
         save_target_positions(positions.cube_position, positions.destination_position)
         return positions
 

@@ -6,7 +6,7 @@ from communication.app import VentionApp
 from state_machine.vention_communication import build_state_machine_rpc_bundle
 
 from robot_control import GantryMachine
-from robot_api import register_robot_api
+from api import register_robot_api
 from persistence import init_storage, load_target_positions, save_target_positions
 
 
