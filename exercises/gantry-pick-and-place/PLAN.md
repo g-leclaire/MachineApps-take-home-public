@@ -83,20 +83,20 @@ Triggers: `home`, `begin_sequence`, a distinct `finished_*` trigger for each mot
 
 ## Phase 3: End-to-end check
 
-- [ ] Run the full sequence from the UI and confirm each state is visited in order.
-- [ ] Trigger a fault (e.g. out-of-range position), confirm the UI shows it and Home recovers.
+- [X] Run the full sequence from the UI and confirm each state is visited in order.
+- [X] Trigger a fault (e.g. out-of-range position), confirm the UI shows it and Home recovers.
 
 ## Phase 4: Bonus (only after Phases 1-3)
 
 - [ ] Tests: backend state machine tests with a fake or real `Robot`; optional frontend component tests.
-- [ ] Persistence: `vention-storage` for cube and destination positions across restarts.
-- [ ] Containerization: Docker Compose for backend and frontend.
-- [ ] Demo: short screen recording.
+- [X] Persistence: `vention-storage` for cube and destination positions across restarts.
+- [X] Containerization: Docker Compose for backend and frontend.
+- [X] Demo: short screen recording.
 
 ## Phase 5: Submission
 
-- [ ] Root `README.md` with setup/run instructions and design decisions, assumptions and trade-offs.
-- [ ] Push to the fork and share the link.
+- [X] Root `README.md` with setup/run instructions and design decisions, assumptions and trade-offs.
+- [X] Push to the fork and share the link.
 
 ## Decisions log
 
@@ -105,9 +105,8 @@ Record decisions here as they are made, for the final README write-up.
 - Use a distinct internal `finished_*` trigger for each motion and gripper state, following the Vention docs. Only `home` and `begin_sequence` are exposed over RPC.
 - Spawned tasks are cancelled by our own handler on fault, because the library's `to_fault` does not cancel them.
 - Libraries upgraded to the latest releases (state-machine 0.16.26, communication 0.15.32, storage 0.20.10); the originally pinned versions lacked parts of the documented API.
-- Startup simulation is skipped because the external simulator has no connect/enable API; construction leaves the state machine in `ready`.
 - Use arbitrary safe travel Z, initial pickup, and initial placement coordinates as configurable defaults (through changing the code).
-- Use motion speed `100` mm/s and poll every `50` ms; report moving from non-zero simulator axis speed.
+- Use motion speed `100` mm/s and poll every `100` ms; report moving from non-zero simulator axis speed.
 - Disallow Home and position edits during a sequence, and snapshot pickup/placement coordinates at sequence start to prevent moving targets.
 - Use a single stream for all telemerty including current state, use get/set for cube and destination positions
 - Home is the recovery path: `home` is allowed from `ready` and from `fault`. A move in progress cannot be aborted; it must finish or fault by its timeout.
