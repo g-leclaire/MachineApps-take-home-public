@@ -1,4 +1,4 @@
-import { useTelemetry } from '../hooks/useTelemetry'
+import { useTelemetry } from './useTelemetry'
 import RobotControls from './RobotControls'
 import TargetPositions from './TargetPositions'
 import './Dashboard.css'
@@ -13,7 +13,7 @@ function formatPosition(position: readonly number[] | undefined): string {
   return position.map((value) => value.toFixed(1)).join(', ')
 }
 
-function Dashboard() {
+export function Dashboard() {
   const { telemetry, connectionError } = useTelemetry()
   const machineState = telemetry?.state ?? null
   const machineError = telemetry?.error ? telemetry.error : null
@@ -67,5 +67,3 @@ function Dashboard() {
     </main>
   )
 }
-
-export default Dashboard
