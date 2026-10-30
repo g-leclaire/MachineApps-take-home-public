@@ -123,17 +123,18 @@ There is currently no automated backend test suite in the repository. Starting t
 
 ## **Design decisions, assumptions, and trade-offs**
 
-- The gantry robot should always move on the X/Y plane from a safe Z value (height) to avoid running into objects. An arbitrary safe Z value of 300 was chosen.
-  - Every movement needs a liftig and lowering phase. This was implemented by using separate states for each part of the movement. Trade-off: there is many different states for a simple operation, there can be some repetition in the state definition and implementation. However, the robot operation is more transparent. If an error occurs, it is easier to know what went wrong because the states are more specific.
-  - The provided `move_home` cannot be used directly without `move_to` because it could cause the robot to run into objects.
-- `robot_sim.py` should be considered as external and it should not be changed. Attributes should not be set directly. Methods and constructor should be used instead.
-  - Exception: axis speed is reset on `fault` since the interface doesn't provide a way to stop the robot.
-- The `ready` entry handler clears `last_error` so a recovered machine does not continue reporting a stale fault. The `fault` entry handler clears timeouts, cancels spawned motion tasks, and resets axis speed. This cleanup is performed synchronously because the state-machine library does not await its async `cancel_tasks` callback.
-- A single stream was used for all telemetry including current state.
-  - This makes the implementation and usage simpler. The trade-off is not being able to subscribe to a specific stream like current state or robot position.
-  - Telemetry is published from the motion loop on every poll (currently every 100 ms) and on every state change, but only when the snapshot differs from the last one published, so idle periods send nothing and the stream stays at roughly 10 Hz while moving.
-- A single get/set was used for cube and destination positions.
-  - This makes the implementation, usage and user experience simpler. The trade-off is that cube position and destination cannot be set individually.
-  - To prevent problems like running into objects, the cube and destination positions can only be set when the state is `ready`. The UI also prevents the user from submitting values if they haven't changed to prevent backend calls.
-  - To go a step further, we should validate that the robot doesn't clip the cube or tables with the new coordinates.
-- The robot position can be set from the backend endpoint, but not through the UI. This follows the specifications.
+- Backend design: The implementation is split across distinct cohesive modules (`api`, `persistence`, and `robot_control`). Module interaction is kept to a minimum to reduce coupling. `main.py` starts the server and wires the modules together.
+- The gantry moves in the X/Y plane at a safe Z height to avoid collisions. 300 was chosen as the safe travel height.
+  - Each movement includes lifting and lowering phases, modeled as separate states. This adds states and some repetition, but makes the robot's operation more transparent and helps identify which step failed.
+  - During homing, the robot first moves to the safe travel height and traverses above its home position. It then calls `move_home()` to lower to the home position; calling it before those steps could cause a collision.
+- Treat `robot_sim.py` as an external dependency and leave it unchanged. Use its methods and constructor rather than setting its attributes directly.
+  - Exception: axis speed is reset on `fault` because the simulator provides no method to stop the robot.
+- The `ready` entry handler clears `last_error` so a recovered machine does not report a stale fault. The `fault` entry handler clears timeouts, cancels spawned motion tasks, and resets axis speed. This cleanup is synchronous because the state-machine library does not await its asynchronous `cancel_tasks` callback.
+- A single stream carries all telemetry, including the current state.
+  - This simplifies implementation and use, but clients cannot subscribe to only one type of telemetry, such as the current state or robot position.
+  - Telemetry is published on each motion-loop poll (currently every 100 ms) and on each state change, but only when the snapshot changes. As a result, idle periods produce no updates, while motion produces updates at roughly 10 Hz.
+- A single get/set action handles both the cube and destination positions.
+  - This simplifies implementation and use, but the two positions cannot be updated independently.
+  - To reduce collision risk, the positions can be changed only while the machine is `ready`. The UI also prevents submission until a value changes, avoiding unnecessary RPC calls.
+  - Additional validation could check whether the new coordinates would cause the robot to collide with the cube or tables.
+- The backend exposes an RPC action to set the robot position, but the UI does not provide this control, in keeping with the specification.
