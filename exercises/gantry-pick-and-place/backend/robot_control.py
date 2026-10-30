@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from collections.abc import Callable
 
 from state_machine.core import StateMachine
@@ -6,6 +7,8 @@ from state_machine.defs import State, StateGroup, Trigger
 from state_machine.decorators import on_enter_state, auto_timeout
 
 from robot_sim import Robot
+
+logger = logging.getLogger(__name__)
 
 
 class PickPlace(StateGroup):
@@ -100,7 +103,7 @@ class GantryMachine(StateMachine):
     @on_enter_state(States.pick_place.homing_lifting)
     @auto_timeout(10.0, Triggers.to_fault)
     def enter_homing_lifting(self, _):
-        print("Entering homing_lifting")
+        logger.info("Entering homing_lifting")
         self.spawn(self._move_to(self._current_xy_at_safe_z(), Triggers.finished_homing_lifting))
 
     def _current_xy_at_safe_z(self) -> list[float]:
@@ -114,14 +117,14 @@ class GantryMachine(StateMachine):
     @on_enter_state(States.pick_place.homing_traversing)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_homing_traversing(self, _):
-        print("Entering homing_traversing")
+        logger.info("Entering homing_traversing")
         target = [self.robot.home_position[0], self.robot.home_position[1], self.safe_travel_z]
         self.spawn(self._move_to(target, Triggers.finished_homing_traversing))
 
     @on_enter_state(States.pick_place.homing_lowering)
     @auto_timeout(10.0, Triggers.to_fault)
     def enter_homing_lowering(self, _):
-        print("Entering homing_lowering")
+        logger.info("Entering homing_lowering")
         self.spawn(
             self._run_motion(
                 lambda: self.robot.move_home(speed=self.motion_speed),
@@ -139,7 +142,7 @@ class GantryMachine(StateMachine):
         try:
             while True:
                 position, _, error = step()
-                print(f"Current position: {[round(coordinate) for coordinate in position]}")
+                logger.debug("Current position: %s", [round(coordinate) for coordinate in position])
                 if error:
                     self.last_error = error
                     self.trigger(Triggers.to_fault.name)
@@ -162,58 +165,58 @@ class GantryMachine(StateMachine):
     @on_enter_state(States.pick_place.moving_to_cube_lifting)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_moving_to_cube_lifting(self, _):
-        print("Entering moving_to_cube_lifting")
+        logger.info("Entering moving_to_cube_lifting")
         self.spawn(self._move_to(self._current_xy_at_safe_z(), Triggers.finished_moving_to_cube_lifting))
 
     @on_enter_state(States.pick_place.moving_to_cube_traversing)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_moving_to_cube_traversing(self, _):
-        print("Entering moving_to_cube_traversing")
+        logger.info("Entering moving_to_cube_traversing")
         target = [self.cube_position[0], self.cube_position[1], self.safe_travel_z]
         self.spawn(self._move_to(target, Triggers.finished_moving_to_cube_traversing))
 
     @on_enter_state(States.pick_place.moving_to_cube_lowering)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_moving_to_cube_lowering(self, _):
-        print("Entering moving_to_cube_lowering")
+        logger.info("Entering moving_to_cube_lowering")
         target = [self.cube_position[0], self.cube_position[1], self.cube_position[2]]
         self.spawn(self._move_to(target, Triggers.finished_moving_to_cube_lowering))
 
     @on_enter_state(States.pick_place.gripping)
     def enter_gripping(self, _):
-        print("Entering gripping")
+        logger.info("Entering gripping")
         self.robot.closed_gripper()
         self.trigger(Triggers.finished_gripping.name)
         
     @on_enter_state(States.pick_place.moving_to_destination_lifting)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_moving_to_destination_lifting(self, _):
-        print("Entering moving_to_destination_lifting")
+        logger.info("Entering moving_to_destination_lifting")
         self.spawn(self._move_to(self._current_xy_at_safe_z(), Triggers.finished_moving_to_destination_lifting))
 
     @on_enter_state(States.pick_place.moving_to_destination_traversing)
     @auto_timeout(30.0, Triggers.to_fault)
     def enter_moving_to_destination_traversing(self, _):
-        print("Entering moving_to_destination_traversing")
+        logger.info("Entering moving_to_destination_traversing")
         target = [self.destination_position[0], self.destination_position[1], self.safe_travel_z]
         self.spawn(self._move_to(target, Triggers.finished_moving_to_destination_traversing))
 
     @on_enter_state(States.pick_place.moving_to_destination_lowering)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_moving_to_destination_lowering(self, _):
-        print("Entering moving_to_destination_lowering")
+        logger.info("Entering moving_to_destination_lowering")
         target = [self.destination_position[0], self.destination_position[1], self.destination_position[2]]
         self.spawn(self._move_to(target, Triggers.finished_moving_to_destination_lowering))
 
     @on_enter_state(States.pick_place.releasing)
     def enter_releasing(self, _):
-        print("Entering releasing")
+        logger.info("Entering releasing")
         self.robot.open_gripper()
         self.trigger(Triggers.finished_releasing.name)
 
     @on_enter_state(States.pick_place.lifting_after_release)
     @auto_timeout(10.0, Triggers.to_fault)
     def enter_lifting_after_release(self, _):
-        print("Entering lifting_after_release")
+        logger.info("Entering lifting_after_release")
         target = [self.destination_position[0], self.destination_position[1], self.safe_travel_z]
         self.spawn(self._move_to(target, Triggers.finished_lifting_after_release))
