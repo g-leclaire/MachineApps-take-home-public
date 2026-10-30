@@ -10,6 +10,12 @@ from robot_sim import Robot
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_CUBE_POSITION = (-200.0, 200.0, 200.0)
+DEFAULT_DESTINATION_POSITION = (200.0, -200.0, 200.0)
+SAFE_TRAVEL_Z = 300.0
+MOTION_SPEED = 100
+MOTION_POLL_INTERVAL = 0.1
+
 
 class PickPlace(StateGroup):
     homing_lifting = State()
@@ -66,14 +72,10 @@ TRANSITIONS = [
 ]
 
 class GantryMachine(StateMachine):
-    cube_position = [-200.0, 200.0, 200.0]
-    destination_position = [200.0, -200.0, 200.0]
-    safe_travel_z = 300.0
-    motion_speed = 100
-    motion_poll_interval = 0.1
-
     def __init__(self, robot: Robot | None = None):
         self.robot = robot if robot is not None else Robot()
+        self.cube_position = list(DEFAULT_CUBE_POSITION)
+        self.destination_position = list(DEFAULT_DESTINATION_POSITION)
         self.last_error: str | None = None
         self.on_motion_update: Callable[[], None] | None = None
         super().__init__(
@@ -106,17 +108,17 @@ class GantryMachine(StateMachine):
         self.spawn(self._move_to(self._current_xy_at_safe_z(), Triggers.finished_homing_lifting))
 
     def _current_xy_at_safe_z(self) -> list[float]:
-        return [self.robot.current_position[0], self.robot.current_position[1], self.safe_travel_z]
+        return [self.robot.current_position[0], self.robot.current_position[1], SAFE_TRAVEL_Z]
 
     async def _move_to(self, target: list[float], completion_trigger: Trigger) -> None:
         await self._run_motion(
-            lambda: self.robot.move_to(target, speed=self.motion_speed), target, completion_trigger
+            lambda: self.robot.move_to(target, speed=MOTION_SPEED), target, completion_trigger
         )
 
     @on_enter_state(States.pick_place.homing_traversing)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_homing_traversing(self, _):
-        target = [self.robot.home_position[0], self.robot.home_position[1], self.safe_travel_z]
+        target = [self.robot.home_position[0], self.robot.home_position[1], SAFE_TRAVEL_Z]
         self.spawn(self._move_to(target, Triggers.finished_homing_traversing))
 
     @on_enter_state(States.pick_place.homing_lowering)
@@ -124,7 +126,7 @@ class GantryMachine(StateMachine):
     def enter_homing_lowering(self, _):
         self.spawn(
             self._run_motion(
-                lambda: self.robot.move_home(speed=self.motion_speed),
+                lambda: self.robot.move_home(speed=MOTION_SPEED),
                 self.robot.home_position,
                 Triggers.finished_homing_lowering,
             )
@@ -152,7 +154,7 @@ class GantryMachine(StateMachine):
                     self.trigger(completion_trigger.name)
                     return
 
-                await asyncio.sleep(self.motion_poll_interval)
+                await asyncio.sleep(MOTION_POLL_INTERVAL)
         except asyncio.CancelledError:
             raise
         except Exception as error:
@@ -167,7 +169,7 @@ class GantryMachine(StateMachine):
     @on_enter_state(States.pick_place.moving_to_cube_traversing)
     @auto_timeout(20.0, Triggers.to_fault)
     def enter_moving_to_cube_traversing(self, _):
-        target = [self.cube_position[0], self.cube_position[1], self.safe_travel_z]
+        target = [self.cube_position[0], self.cube_position[1], SAFE_TRAVEL_Z]
         self.spawn(self._move_to(target, Triggers.finished_moving_to_cube_traversing))
 
     @on_enter_state(States.pick_place.moving_to_cube_lowering)
@@ -189,7 +191,7 @@ class GantryMachine(StateMachine):
     @on_enter_state(States.pick_place.moving_to_destination_traversing)
     @auto_timeout(30.0, Triggers.to_fault)
     def enter_moving_to_destination_traversing(self, _):
-        target = [self.destination_position[0], self.destination_position[1], self.safe_travel_z]
+        target = [self.destination_position[0], self.destination_position[1], SAFE_TRAVEL_Z]
         self.spawn(self._move_to(target, Triggers.finished_moving_to_destination_traversing))
 
     @on_enter_state(States.pick_place.moving_to_destination_lowering)
@@ -206,5 +208,5 @@ class GantryMachine(StateMachine):
     @on_enter_state(States.pick_place.lifting_after_release)
     @auto_timeout(10.0, Triggers.to_fault)
     def enter_lifting_after_release(self, _):
-        target = [self.destination_position[0], self.destination_position[1], self.safe_travel_z]
+        target = [self.destination_position[0], self.destination_position[1], SAFE_TRAVEL_Z]
         self.spawn(self._move_to(target, Triggers.finished_lifting_after_release))
