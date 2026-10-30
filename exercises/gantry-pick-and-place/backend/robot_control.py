@@ -82,6 +82,10 @@ class GantryMachine(StateMachine):
     def set_robot_position(self, initial_position: list[float]) -> None:
         self.robot = Robot(initial_position=list(initial_position))
 
+    def set_target_positions(self, cube_position: list[float], destination_position: list[float]) -> None:
+        self.cube_position = list(cube_position)
+        self.destination_position = list(destination_position)
+
     @on_enter_state("ready")
     def clear_error(self, _):
         self.last_error = None

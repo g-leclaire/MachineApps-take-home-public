@@ -1,10 +1,12 @@
 import asyncio
+from collections.abc import Callable
 
 from pydantic import BaseModel, field_validator
 from communication.decorators import action, stream
 from communication.errors import ConnectError
 
 from robot_control import GantryMachine
+from validation import validate_coordinates
 from robot_sim import GripperState
 
 
@@ -16,19 +18,13 @@ class Telemetry(BaseModel):
     moving: bool
 
 
-def _validate_coordinates(value: list[float]) -> list[float]:
-    if len(value) != 3 or not all(-1000 <= coordinate <= 1000 for coordinate in value):
-        raise ValueError("Expected three coordinates within [-1000, 1000]")
-    return value
-
-
 class RobotPosition(BaseModel):
     position: list[float]
 
     @field_validator("position")
     @classmethod
     def _validate_position(cls, value: list[float]) -> list[float]:
-        return _validate_coordinates(value)
+        return validate_coordinates(value)
 
 
 class TargetPositions(BaseModel):
@@ -38,10 +34,13 @@ class TargetPositions(BaseModel):
     @field_validator("cube_position", "destination_position")
     @classmethod
     def _validate_positions(cls, value: list[float]) -> list[float]:
-        return _validate_coordinates(value)
+        return validate_coordinates(value)
 
 
-def register_robot_api(state_machine: GantryMachine) -> None:
+def register_robot_api(
+    state_machine: GantryMachine,
+    save_target_positions: Callable[[list[float], list[float]], None],
+) -> None:
     last_telemetry: Telemetry | None = None
 
     @stream(name="TelemetryStream", payload=Telemetry)
@@ -100,6 +99,7 @@ def register_robot_api(state_machine: GantryMachine) -> None:
             )
         state_machine.cube_position = list(positions.cube_position)
         state_machine.destination_position = list(positions.destination_position)
+        save_target_positions(positions.cube_position, positions.destination_position)
         return positions
 
     state_machine.add_state_change_callback(publish_if_changed)
