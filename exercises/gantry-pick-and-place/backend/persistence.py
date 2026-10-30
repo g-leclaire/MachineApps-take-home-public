@@ -1,4 +1,5 @@
 import logging
+import os
 
 from sqlalchemy import JSON, Column
 from sqlmodel import Field, SQLModel
@@ -8,6 +9,7 @@ from storage.bootstrap import bootstrap
 from validation import validate_coordinates
 
 CONFIG_ID = 1
+DEFAULT_DATABASE_URL = "sqlite:///./gantry.db"
 
 logger = logging.getLogger(__name__)
 
@@ -18,8 +20,8 @@ class GantryConfig(SQLModel, table=True):
     destination_position: list[float] = Field(sa_column=Column(JSON, nullable=False))
 
 
-def init_storage(database_url: str = "sqlite:///./gantry.db") -> ModelAccessor[GantryConfig]:
-    bootstrap(database_url=database_url, auto_migrate=True)
+def init_storage() -> ModelAccessor[GantryConfig]:
+    bootstrap(database_url=os.getenv("GANTRY_DATABASE_URL", DEFAULT_DATABASE_URL), auto_migrate=True)
     return ModelAccessor(GantryConfig, "gantry_config")
 
 

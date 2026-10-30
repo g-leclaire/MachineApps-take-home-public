@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      GANTRY_DATABASE_URL: sqlite:////data/gantry.db
+    ports:
+      - "8000:8000"
+    volumes:
+      - gantry-data:/data
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    environment:
+      RPC_BACKEND_URL: http://backend:8000
+    ports:
+      - "5173:5173"
+
+volumes:
+  gantry-data:
