@@ -127,7 +127,7 @@ There is currently no automated backend test suite in the repository. Starting t
 - The gantry moves in the X/Y plane at a safe Z height to avoid collisions. 300 was chosen as the safe travel height.
   - Each movement includes lifting and lowering phases, modeled as separate states. This adds states and some repetition, but makes the robot's operation more transparent and helps identify which step failed.
   - During homing, the robot first moves to the safe travel height and traverses above its home position. It then calls `move_home()` to lower to the home position; calling it before those steps could cause a collision.
-- Treat `robot_sim.py` as an external dependency and leave it unchanged. Use its methods and constructor rather than setting its attributes directly.
+- Assumption: Treat `robot_sim.py` as an external dependency and leave it unchanged. Use its methods and constructor rather than setting its attributes directly.
   - Exception: axis speed is reset on `fault` because the simulator provides no method to stop the robot.
 - The `ready` entry handler clears `last_error` so a recovered machine does not report a stale fault. The `fault` entry handler clears timeouts, cancels spawned motion tasks, and resets axis speed. This cleanup is synchronous because the state-machine library does not await its asynchronous `cancel_tasks` callback.
 - A single stream carries all telemetry, including the current state.
